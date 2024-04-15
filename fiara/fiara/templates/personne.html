@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+{% load static %}
+{% load widget_tweaks%}
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Personne</title>
+    <link
+        href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+        rel="stylesheet"
+        integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH"
+        crossorigin="anonymous"
+    />
+    <script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+        crossorigin="anonymous" defer
+    ></script>
+</head>
+<body class="bg-secondary text-white">
+    <!-- Votre contenu HTML ici -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-light">
+            <li class="breadcrumb-item active" aria-current="page">
+                <a href="http://127.0.0.1:8000/" class="text-dark">Accueil</a>
+            </li>
+            <li class="breadcrumb-item">
+                <a href="http://127.0.0.1:8000/voiture" class="text-dark">Voiture</a>
+            </li>
+            <li class="breadcrumb-item active" aria-current="page">Personne</li>
+        </ol>
+    </nav>
+
+    <div class="container">
+        <div class="row mt-5">
+            <div class="col">
+                <h1>PERSONNE</h1>
+            </div>
+        </div>
+        <button
+        type="button"
+        class="btn btn-primary"
+        data-bs-toggle="modal"
+        data-bs-target="#ajouterModal">
+        Ajouter utilisateur
+    </button>
+        <div class="table-responsive mt-4 w-100 m-0">
+            <table class="table">
+                <caption class="text-white">
+                    Liste Personne
+                </caption>
+                <thead>
+                    <tr>
+                        <th scope="col">ID</th>
+                        <th scope="col">Nom</th>
+                        <th scope="col">Prénom</th>
+                        <th scope="col">Âge</th>
+                        <th scope="col">Genre</th>
+                        <th scope="col" class="col-2">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for personne in personnes %}
+                    <tr>
+                        <td>{{ personne.id }}</td>
+                        <td>{{ personne.nom }}</td>
+                        <td>{{ personne.prenom}}</td>
+                        <td>{{ personne.age }}</td>
+                        <td>{{ personne.genre }}</td>
+                        <td>
+                            <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#modal" data-personne-id="{{ personne.id }}">Modifier</button>
+<a type="button" class="btn btn-danger" href="/personne/supprimer/{{personne.id}}">Supprimer</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="modal fade" id="modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog text-black">
+            <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="exampleModalLabel">Voiture</h5>
+            
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form action="/personne/modifiers/{{ personne.id }}/" method="POST" id="personneForm">
+                {% csrf_token %}
+                <input type="hidden" name="id" value="{{ personne.id }}">
+    <!-- Autres champs de formulaire ici -->
+    <p>ID: <span id="modal-personne-id">{{ personne.id }}</span></p>
+                {% for field in form %}
+                    {{ field.label }}
+                    {% render_field field class="form-control" %}
+                {% endfor %}
+             
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Fermer
+            </button>
+            <button type="submit" class="btn btn-primary">Enregistrer</button>
+          </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+
+    <div
+    class="modal fade"
+    id="ajouterModal"
+    tabindex="-1"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+>
+    <div class="modal-dialog text-black">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">Ajouter utilisateur</h5>
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+            </div>
+            <div class="modal-body">
+                <form action="/personne" method="POST">
+                    {% csrf_token %}
+                    {% for field in form %}
+                    <div class="mb-3">
+                        {{ field.label_tag }}
+                        {% render_field field class="form-control" %}
+                    </div>
+                    {% endfor %}
+                
+            </div>
+            <div class="modal-footer">
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Fermer
+                </button>
+                <button type="submit" class="btn btn-primary">Ajouter</button>
+            </div>
+        </form>
+        </div>
+    </div>
+</div>
+
+
+    
+
+</body></html>
+
+<script>
+    // Fonction pour charger les données de la personne dans le modal
+function chargerDonneesPersonne(id) {
+    // Récupérer les données de la personne en utilisant son identifiant
+    var url = "/personne/modifier/" + id; // UR L pour récupérer les données de la personne
+    fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            // Mettre à jour les champs du modal avec les données de la personne
+            document.getElementById("id_nom").value = data.nom;
+            document.getElementById("id_prenom").value = data.prenom;
+            document.getElementById("id_age").value = data.age;
+            document.getElementById("id_genre").value = data.genre;
+            document.getElementById("modal-personne-id").textContent = id; // Mettre à jour l'ID dans la modal
+        })
+        .catch(error => console.error('Une erreur s\'est produite:', error));
+}
+
+// Ajouter un écouteur d'événements pour le clic sur le bouton "Modifier"
+document.addEventListener("DOMContentLoaded", function() {
+    var buttons = document.querySelectorAll('[data-bs-toggle="modal"]');
+    buttons.forEach(function(button) {
+        button.addEventListener("click", function() {
+            var personneId = this.getAttribute("data-personne-id");
+            chargerDonneesPersonne(personneId);
+        });
+    });
+});
+</script>
+

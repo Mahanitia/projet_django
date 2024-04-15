@@ -1,0 +1,30 @@
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Modifier Personne</h1>
+    <form action="{% url 'modifier_personne' id=personne.id %}" method="POST" class="row g-3">
+        {% csrf_token %}
+        <div class="col-md-6">
+            <label for="nom" class="form-label">Nom</label>
+            <input type="text" class="form-control" id="nom" name="nom" value="{{ personne.nom }}">
+        </div>
+        <div class="col-md-6">
+            <label for="prenom" class="form-label">Prénom</label>
+            <input type="text" class="form-control" id="prenom" name="prenom" value="{{ personne.prenom }}">
+        </div>
+        <div class="col-md-6">
+            <label for="age" class="form-label">Âge</label>
+            <input type="number" class="form-control" id="age" name="age" value="{{ personne.age }}">
+        </div>
+        <div class="col-md-6">
+            <label for="genre" class="form-label">Genre</label>
+            <select class="form-select" id="genre" name="genre">
+                <option value="homme" {% if personne.genre == 'homme' %}selected{% endif %}>Homme</option>
+                <option value="femme" {% if personne.genre == 'femme' %}selected{% endif %}>Femme</option>
+            </select>
+        </div>
+        <div class="col-12">
+            <button type="submit" class="btn btn-primary">Modifier</button>
+        </div>
+    </form>
+</div>
+{% endblock content %}
